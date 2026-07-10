@@ -1,0 +1,25 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Tasmota Timer Configuration",
+        "description": "This integration provides services to configure Tasmota device timers via MQTT. No additional configuration is required - simply add the integration to enable the services.",
+        "data": {}
+      }
+    },
+    "abort": {
+      "already_configured": "Integration is already configured"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Tasmota Timer Configuration Options",
+        "description": "Configure options for the Tasmota Timer Configuration integration. Auto-discovery listens for Tasmota native discovery on tasmota/discovery/+/config, with fallback to tele/+/LWT and tele/+/STATE. You can also add device topics manually.",
+        "data": {
+          "device_topics": "Manual device topics"
+        }
+      }
+    }
+  }
+}

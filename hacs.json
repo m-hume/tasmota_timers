@@ -1,0 +1,7 @@
+{
+  "name": "Tasmota Timer Configuration",
+  "hacs": "1.6.0",
+  "domains": ["tasmota_timers"],
+  "iot_class": "Local Push",
+  "homeassistant": "2023.1.0"
+}

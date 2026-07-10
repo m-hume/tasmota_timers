@@ -1,0 +1,186 @@
+set_timer:
+  name: Set Timer
+  description: Configure a Tasmota device timer with all parameters
+  fields:
+    device_topic:
+      name: Device Topic
+      description: The MQTT topic of the Tasmota device (e.g., 'tasmota_switch1')
+      required: true
+      example: "tasmota_switch1"
+      selector:
+        text:
+    timer_index:
+      name: Timer Index
+      description: Timer number (1-16)
+      required: true
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 16
+          mode: box
+    enable:
+      name: Enable
+      description: Enable or disable the timer
+      required: false
+      default: 1
+      selector:
+        select:
+          options:
+            - label: "Disabled"
+              value: "0"
+            - label: "Enabled"
+              value: "1"
+    time:
+      name: Time
+      description: Timer time in HH:MM format (24-hour)
+      required: false
+      default: "00:00"
+      example: "18:30"
+      selector:
+        text:
+    window:
+      name: Window
+      description: Random window in minutes (0-15)
+      required: false
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 15
+          mode: box
+    days:
+      name: Days
+      description: Days of week (7 characters, 1=active, 0=inactive, starting with Sunday)
+      required: false
+      default: "1111111"
+      example: "0111110"
+      selector:
+        text:
+    repeat:
+      name: Repeat
+      description: Repeat timer daily
+      required: false
+      default: 1
+      selector:
+        select:
+          options:
+            - label: "No Repeat"
+              value: "0"
+            - label: "Repeat"
+              value: "1"
+    output:
+      name: Output
+      description: Output/relay number to control (1-8)
+      required: false
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 8
+          mode: box
+    action:
+      name: Action
+      description: Action to perform when timer triggers
+      required: false
+      default: 1
+      selector:
+        select:
+          options:
+            - label: "Off"
+              value: "0"
+            - label: "On"
+              value: "1"
+            - label: "Toggle"
+              value: "2"
+            - label: "Rule"
+              value: "3"
+
+enable_timer:
+  name: Enable Timer
+  description: Enable a specific Tasmota device timer
+  fields:
+    device_topic:
+      name: Device Topic
+      description: The MQTT topic of the Tasmota device
+      required: true
+      example: "tasmota_switch1"
+      selector:
+        text:
+    timer_index:
+      name: Timer Index
+      description: Timer number (1-16)
+      required: true
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 16
+          mode: box
+
+disable_timer:
+  name: Disable Timer
+  description: Disable a specific Tasmota device timer
+  fields:
+    device_topic:
+      name: Device Topic
+      description: The MQTT topic of the Tasmota device
+      required: true
+      example: "tasmota_switch1"
+      selector:
+        text:
+    timer_index:
+      name: Timer Index
+      description: Timer number (1-16)
+      required: true
+      default: 1
+      selector:
+        number:
+          min: 1
+          max: 16
+          mode: box
+
+enable_all_timers:
+  name: Enable All Timers
+  description: Enable all timers on a Tasmota device
+  fields:
+    device_topic:
+      name: Device Topic
+      description: The MQTT topic of the Tasmota device
+      required: true
+      example: "tasmota_switch1"
+      selector:
+        text:
+
+disable_all_timers:
+  name: Disable All Timers
+  description: Disable all timers on a Tasmota device
+  fields:
+    device_topic:
+      name: Device Topic
+      description: The MQTT topic of the Tasmota device
+      required: true
+      example: "tasmota_switch1"
+      selector:
+        text:
+
+get_timers:
+  name: Get Timers
+  description: Request current timer configuration from a Tasmota device
+  fields:
+    device_topic:
+      name: Device Topic
+      description: The MQTT topic of the Tasmota device
+      required: true
+      example: "tasmota_switch1"
+      selector:
+        text:
+    timer_index:
+      name: Timer Index
+      description: Specific timer to retrieve (leave empty for all timers)
+      required: false
+      selector:
+        number:
+          min: 1
+          max: 16
+          mode: box
