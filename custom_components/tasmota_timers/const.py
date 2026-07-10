@@ -23,6 +23,7 @@ ATTR_TIMER_ACTION = "action"
 
 CONF_DISCOVERY_TOPIC = "discovery_topic"
 CONF_DEVICE_TOPICS = "device_topics"
+CONF_DEVICES = "devices"
 
 DISCOVERY_TASMOTA_CONFIG_TOPIC = "tasmota/discovery/+/config"
 DISCOVERY_LWT_TOPIC = "tele/+/LWT"

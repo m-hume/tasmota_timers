@@ -31,6 +31,7 @@ from .const import (
     ATTR_DEVICE_MAC,
     ATTR_DEVICE_TOPIC,
     ATTR_DEVICE_NAME,
+    CONF_DEVICES,
     DISCOVERY_TASMOTA_CONFIG_TOPIC,
     DISCOVERY_LWT_TOPIC,
     DISCOVERY_STATE_TOPIC,
@@ -82,6 +83,29 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         "add_entities_callback": None,
     }
 
+    # Restore devices persisted from previous runs
+    persisted_devices = entry.data.get(CONF_DEVICES, {})
+    if isinstance(persisted_devices, dict):
+        for device_topic, device_info in persisted_devices.items():
+            if isinstance(device_info, dict):
+                entry_data["devices"][device_topic] = {
+                    ATTR_DEVICE_NAME: device_info.get(ATTR_DEVICE_NAME, device_topic),
+                    ATTR_DEVICE_MAC: device_info.get(ATTR_DEVICE_MAC),
+                }
+
+    async def _save_devices() -> None:
+        """Persist currently known devices to the config entry."""
+        devices_to_save = {
+            topic: {
+                ATTR_DEVICE_TOPIC: topic,
+                ATTR_DEVICE_NAME: info.get(ATTR_DEVICE_NAME, topic),
+                ATTR_DEVICE_MAC: info.get(ATTR_DEVICE_MAC),
+            }
+            for topic, info in entry_data["devices"].items()
+        }
+        new_data = {**entry.data, CONF_DEVICES: devices_to_save}
+        hass.config_entries.async_update_entry(entry, data=new_data)
+
     async def _discover_device(
         device_topic: str, device_name: str | None = None, device_mac: str | None = None
     ) -> None:
@@ -93,6 +117,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             ATTR_DEVICE_NAME: device_name or device_topic,
             ATTR_DEVICE_MAC: device_mac,
         }
+        await _save_devices()
         add_callback = entry_data["add_entities_callback"]
         if add_callback:
             from .switch import TasmotaTimersSwitch
