@@ -47,7 +47,7 @@ Thank you for your interest in contributing to this project! Here are some guide
 1. Clone the repository
 2. Create a symbolic link from your Home Assistant `custom_components` directory:
    ```bash
-   ln -s /path/to/tasmota_timers /path/to/homeassistant/custom_components/tasmota_timers
+   ln -s /path/to/tasmota_timers/custom_components/tasmota_timers /path/to/homeassistant/custom_components/tasmota_timers
    ```
 3. Restart Home Assistant in development mode
 
