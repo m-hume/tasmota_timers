@@ -1,12 +1,12 @@
 {
   "domain": "tasmota_timers",
   "name": "Tasmota Timer Configuration",
-  "version": "0.2.0",
-  "documentation": "https://github.com/m-hume/tasmota_timers",
-  "issue_tracker": "https://github.com/m-hume/tasmota_timers/issues",
-  "dependencies": ["mqtt"],
   "codeowners": ["@m-hume"],
   "config_flow": true,
+  "dependencies": ["mqtt"],
+  "documentation": "https://github.com/m-hume/tasmota_timers",
   "iot_class": "local_push",
-  "requirements": []
+  "issue_tracker": "https://github.com/m-hume/tasmota_timers/issues",
+  "requirements": [],
+  "version": "0.2.0"
 }
