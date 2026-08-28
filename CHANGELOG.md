@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-08-28
+
+### Fixed
+- Wrap MQTT subscriptions with `entry.async_on_unload()` to prevent stale subscriptions after reload/removal
+- Register update listener so changing manual device topics in options immediately reloads the integration
+- Move service removal inside `if unload_ok` branch so unloading one entry does not strip services from another
+- Validate Tasmota-shaped payloads in fallback discovery to avoid creating entities from non-Tasmota MQTT devices
+- Bump minimum Home Assistant version to 2024.12.0 (required for `OptionsFlow.config_entry` property)
+
+### Changed
+- Add `integration_type: service` to manifest
+- Add unique ID to config flow to prevent duplicate entries
+- Complete brand directory with `icon@2x.png`, `logo.png`, and `logo@2x.png`
+
 ## [0.2.0] - 2026-07-10
 
 ### Added

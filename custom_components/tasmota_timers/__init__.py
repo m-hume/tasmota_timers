@@ -161,13 +161,38 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         if len(topic_parts) < 3:
             return
         device_topic = topic_parts[1]
+
+        # Only process Tasmota-shaped payloads to avoid creating entities
+        # from non-Tasmota MQTT devices that happen to publish under tele/
+        if msg.topic.endswith("/LWT"):
+            if msg.payload != "Online":
+                return
+        elif msg.topic.endswith("/STATE"):
+            try:
+                payload = json.loads(msg.payload)
+            except (ValueError, TypeError):
+                return
+            if not isinstance(payload, dict):
+                return
+            # Tasmota STATE messages contain characteristic fields
+            if not any(
+                key in payload for key in ("Uptime", "Heap", "Power", "Wifi")
+            ):
+                return
+
         await _discover_device(device_topic)
 
-    await mqtt.async_subscribe(
-        hass, DISCOVERY_TASMOTA_CONFIG_TOPIC, _tasmota_discovery_callback
+    entry.async_on_unload(
+        await mqtt.async_subscribe(
+            hass, DISCOVERY_TASMOTA_CONFIG_TOPIC, _tasmota_discovery_callback
+        )
     )
-    await mqtt.async_subscribe(hass, DISCOVERY_LWT_TOPIC, _fallback_discovery_callback)
-    await mqtt.async_subscribe(hass, DISCOVERY_STATE_TOPIC, _fallback_discovery_callback)
+    entry.async_on_unload(
+        await mqtt.async_subscribe(hass, DISCOVERY_LWT_TOPIC, _fallback_discovery_callback)
+    )
+    entry.async_on_unload(
+        await mqtt.async_subscribe(hass, DISCOVERY_STATE_TOPIC, _fallback_discovery_callback)
+    )
 
     await hass.config_entries.async_forward_entry_setups(entry, [Platform.SWITCH])
 
@@ -176,6 +201,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         topic.strip() for topic in manual_topics.split(",") if topic.strip()
     ):
         await _discover_device(device_topic)
+
+    async def _update_listener(
+        hass: HomeAssistant, entry: ConfigEntry
+    ) -> None:
+        """Reload the entry when options change."""
+        await hass.config_entries.async_reload(entry.entry_id)
+
+    entry.async_on_unload(entry.add_update_listener(_update_listener))
 
     async def handle_set_timer(call: ServiceCall) -> None:
         """Handle the set_timer service call."""
@@ -295,12 +328,11 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     if unload_ok:
         hass.data[DOMAIN].pop(entry.entry_id)
-
-    hass.services.async_remove(DOMAIN, SERVICE_SET_TIMER)
-    hass.services.async_remove(DOMAIN, SERVICE_ENABLE_TIMER)
-    hass.services.async_remove(DOMAIN, SERVICE_DISABLE_TIMER)
-    hass.services.async_remove(DOMAIN, SERVICE_ENABLE_ALL_TIMERS)
-    hass.services.async_remove(DOMAIN, SERVICE_DISABLE_ALL_TIMERS)
-    hass.services.async_remove(DOMAIN, SERVICE_GET_TIMERS)
+        hass.services.async_remove(DOMAIN, SERVICE_SET_TIMER)
+        hass.services.async_remove(DOMAIN, SERVICE_ENABLE_TIMER)
+        hass.services.async_remove(DOMAIN, SERVICE_DISABLE_TIMER)
+        hass.services.async_remove(DOMAIN, SERVICE_ENABLE_ALL_TIMERS)
+        hass.services.async_remove(DOMAIN, SERVICE_DISABLE_ALL_TIMERS)
+        hass.services.async_remove(DOMAIN, SERVICE_GET_TIMERS)
 
     return unload_ok
